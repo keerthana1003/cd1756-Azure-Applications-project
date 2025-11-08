@@ -81,32 +81,60 @@ def login():
     auth_url = _build_auth_url(scopes=Config.SCOPE, state=session["state"])
     return render_template('login.html', title='Sign In', form=form, auth_url=auth_url)
 
-@app.route(Config.REDIRECT_PATH)  # Its absolute URL must match your app's redirect_uri set in AAD
+@app.route(Config.REDIRECT_PATH)  # Must match Redirect URI in Azure AD
 def authorized():
+    # Validate state (protection against CSRF)
     if request.args.get('state') != session.get("state"):
-        return redirect(url_for("home"))  # No-OP. Goes back to Index page
-    if "error" in request.args:  # Authentication/Authorization failure
+        app.logger.warning("State mismatch detected in MS login.")
+        return redirect(url_for("home"))  
+
+    # Handle login errors (if any)
+    if "error" in request.args:
+        app.logger.error(f"MS Login error: {request.args.get('error_description')}")
         return render_template("auth_error.html", result=request.args)
+
+    # Handle successful auth code returned
     if request.args.get('code'):
         cache = _load_cache()
-        # TODO: Acquire a token from a built msal app, along with the appropriate redirect URI
-        result = None
-        if result is None:
+        msal_app = _build_msal_app(cache=cache)
+
+        try:
+            result = msal_app.acquire_token_by_authorization_code(
+                request.args['code'],
+                scopes=Config.SCOPE,
+                redirect_uri=url_for("authorized", _external=True)
+            )
+        except Exception as e:
+            app.logger.error(f"MSAL authorization code exchange failed: {e}")
+            return render_template("auth_error.html", result={"error": str(e)})
+
+        # Handle if MSAL didn’t return a result
+        if not result:
             app.logger.error("MS Login failed: No token received.")
-            return render_template("auth_error.html", result={"error": "No result"})
+            return render_template("auth_error.html", result={"error": "No token received."})
+
+        # Handle MSAL errors
         if "error" in result:
             app.logger.warning(f"MS Login error: {result.get('error_description', 'Unknown error')}")
             return render_template("auth_error.html", result=result)
-        
-            
-        session["user"] = result.get("id_token_claims")
-        app.logger.info("MS Login success for admin user.")
-        # Note: In a real app, we'd use the 'name' property from session["user"] below
-        # Here, we'll use the admin username for anyone who is authenticated by MS
+
+        # Success: store user info
+        session["user"] = result.get("id_token_claims", {})
+        app.logger.info(f"MS Login success: {session['user'].get('name', 'Unknown User')}")
+
+        # Log in as admin (per your app design)
         user = User.query.filter_by(username="admin").first()
-        login_user(user)
+        if user:
+            login_user(user)
+            app.logger.info("Admin logged in successfully via MS Login.")
+        else:
+            app.logger.error("Admin user not found in database.")
+            return render_template("auth_error.html", result={"error": "Admin user not found"})
+
         _save_cache(cache)
+
     return redirect(url_for('home'))
+
 
 @app.route('/logout')
 def logout():
