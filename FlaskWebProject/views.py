@@ -184,7 +184,7 @@ def _build_msal_app(cache=None, authority=None):
 
 def _build_auth_url(authority=None, scopes=None, state=None):
     msal_app = _build_msal_app(authority=authority)
-    redirect_uri = url_for("authorized", _external=True)
+    redirect_uri = url_for("authorized", _external=True, _scheme='https')
     app.logger.info(f"Redirecting to Microsoft with redirect_uri={redirect_uri}")
     return msal_app.get_authorization_request_url(
         scopes or [],
