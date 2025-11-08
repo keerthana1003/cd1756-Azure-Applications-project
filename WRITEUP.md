@@ -2,10 +2,6 @@
 
 ### Analyze, choose, and justify the appropriate resource option for deploying the app.
 
-*For **both** a VM or App Service solution for the CMS app:*
-- *Analyze costs, scalability, availability, and workflow*
-- *Choose the appropriate solution (VM or App Service) for deploying the app*
-- *Justify your choice*
 - 1. Overview
 For deploying the Flask-based Article CMS application on Azure, there are two main hosting options available — Azure Virtual Machines (VMs) and Azure App Service.
 Both allow web application deployment but differ in their level of control, scalability, cost, and ease of management.
