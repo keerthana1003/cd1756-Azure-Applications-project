@@ -49,6 +49,7 @@ This write-up compares both options and concludes with the reasoning behind choo
   The ability to automatically scale and the ease of deployment using GitHub Actions make App Service highly suitable for a project of this scale and nature.
 ### Assess app changes that would change your decision.
 *Detail how the app and any other needs would have to change for you to change your decision in the last section.* 
+
 4. When the Decision Might Change:
 
 A Virtual Machine might be considered instead of App Service if:
