@@ -102,7 +102,7 @@ def authorized():
             result = msal_app.acquire_token_by_authorization_code(
                 request.args['code'],
                 scopes=Config.SCOPE,
-                redirect_uri=url_for("authorized", _external=True)
+                redirect_uri=url_for("authorized", _external=True, _scheme='https')
             )
         except Exception as e:
             app.logger.error(f"MSAL authorization code exchange failed: {e}")
