@@ -2,11 +2,11 @@
 
 ### Analyze, choose, and justify the appropriate resource option for deploying the app.
 
-- 1. Overview
+ 1. Overview
 For deploying the Flask-based Article CMS application on Azure, there are two main hosting options available — Azure Virtual Machines (VMs) and Azure App Service.
 Both allow web application deployment but differ in their level of control, scalability, cost, and ease of management.
 This write-up compares both options and concludes with the reasoning behind choosing Azure App Service for deployment.
-- 2. Azure Virtual Machine (VM)
+2. Azure Virtual Machine (VM)
      Definition:
      An Azure Virtual Machine (VM) is an Infrastructure-as-a-Service (IaaS) offering that provides full control over the operating system, software installations, and
      environment configurations.
@@ -21,7 +21,7 @@ This write-up compares both options and concludes with the reasoning behind choo
      -Manual scalability: Scaling up or down requires creating and configuring additional VMs.
      -Higher costs: Continuous uptime incurs more charges compared to managed services.
      
-  -3. Azure App Service
+  3. Azure App Service
       Definition:
       Azure App Service is a Platform-as-a-Service (PaaS) offering that allows developers to deploy web applications easily without managing infrastructure.
       It automatically handles scaling, load balancing, patching, and deployment. Developers only need to focus on the application code, while Azure manages the rest.
@@ -32,6 +32,7 @@ This write-up compares both options and concludes with the reasoning behind choo
       -Cost-effective: Pay only for what you use, with no need to manage underlying servers.
       -Automatic management: Azure handles OS updates, SSL certificates, and health monitoring.
       -Complex workflow: Deployment, configuration, and troubleshooting require SSH access and manual setup.
+     
       Cons:
       -Limited control: You can’t access or modify the underlying operating system.
       -Less flexibility for background tasks: Long-running or scheduled background processes may require separate services (like Azure Functions).
