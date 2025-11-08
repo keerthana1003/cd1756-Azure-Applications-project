@@ -66,9 +66,11 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
+            app.logger.warning(f"Invalid login attempt for username={form.username.data}")
             flash('Invalid username or password')
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
+        app.logger.info(f"{user.username} logged in successfully via form login.")
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('home')
@@ -87,9 +89,16 @@ def authorized():
         cache = _load_cache()
         # TODO: Acquire a token from a built msal app, along with the appropriate redirect URI
         result = None
+        if result is None:
+            app.logger.error("MS Login failed: No token received.")
+            return render_template("auth_error.html", result={"error": "No result"})
         if "error" in result:
+            app.logger.warning(f"MS Login error: {result.get('error_description', 'Unknown error')}")
             return render_template("auth_error.html", result=result)
+        
+            
         session["user"] = result.get("id_token_claims")
+        app.logger.info("MS Login success for admin user.")
         # Note: In a real app, we'd use the 'name' property from session["user"] below
         # Here, we'll use the admin username for anyone who is authenticated by MS
         user = User.query.filter_by(username="admin").first()
@@ -99,8 +108,16 @@ def authorized():
 
 @app.route('/logout')
 def logout():
+    # Log which user is logging out (if any)
+    if hasattr(current_user, "username") and current_user.is_authenticated:
+        app.logger.info(f"{current_user.username} logged out.")
+    else:
+        app.logger.info("Anonymous user logged out or session ended.")
+
     logout_user()
-    if session.get("user"): # Used MS Login
+
+    if session.get("user"):  # Used MS Login
+        app.logger.info("MS user session cleared and redirected to Microsoft logout.")
         # Wipe out user and its token cache from session
         session.clear()
         # Also logout from your tenant's web session
@@ -110,19 +127,38 @@ def logout():
 
     return redirect(url_for('login'))
 
+
 def _load_cache():
     # TODO: Load the cache from `msal`, if it exists
-    cache = None
+    """Load token cache from session if it exists."""
+    cache = msal.SerializableTokenCache()
+    if session.get("token_cache"):
+        cache.deserialize(session["token_cache"])
     return cache
 
 def _save_cache(cache):
     # TODO: Save the cache, if it has changed
-    pass
+    """Persist token cache back to session if changed."""
+    if cache.has_state_changed:
+        session["token_cache"] = cache.serialize()
 
 def _build_msal_app(cache=None, authority=None):
     # TODO: Return a ConfidentialClientApplication
-    return None
+    """Return a ConfidentialClientApplication instance from MSAL."""
+    return msal.ConfidentialClientApplication(
+        Config.CLIENT_ID,
+        authority=authority or Config.AUTHORITY,
+        client_credential=Config.CLIENT_SECRET,
+        token_cache=cache
+    )
 
 def _build_auth_url(authority=None, scopes=None, state=None):
+    """Build the Microsoft login URL."""
+    msal_app = _build_msal_app(authority=authority)
+    return msal_app.get_authorization_request_url(
+        scopes or [],
+        state=state,
+        redirect_uri=url_for("authorized", _external=True)
+    )
     # TODO: Return the full Auth Request URL with appropriate Redirect URI
-    return None
+    
