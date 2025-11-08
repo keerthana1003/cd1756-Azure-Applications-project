@@ -49,7 +49,8 @@ This write-up compares both options and concludes with the reasoning behind choo
   The ability to automatically scale and the ease of deployment using GitHub Actions make App Service highly suitable for a project of this scale and nature.
 ### Assess app changes that would change your decision.
 *Detail how the app and any other needs would have to change for you to change your decision in the last section.* 
-When the Decision Might Change:
+4. When the Decision Might Change:
+
 A Virtual Machine might be considered instead of App Service if:
 The application needs custom OS configurations or software installations unavailable in App Service.
 The app must run background daemons, batch jobs, or non-HTTP services.
@@ -58,7 +59,7 @@ The system scales into multiple interconnected services (in which case Azure Kub
 If the CMS added features such as: Background AI/ML tasks (e.g., automated image tagging, analytics) ,File conversions or large video uploads, Batch data processing then App Service’s request-timeout and runtime limits could become restrictive.
 In that case, I would use a Virtual Machine or integrate with Azure Functions or Azure Batch to handle long-running or compute-intensive tasks.
 
-4. Conclusion:
+5. Conclusion:
 In conclusion, Azure App Service is the ideal choice for deploying the Article CMS web application.
 It provides a cost-effective, scalable, and fully managed environment that perfectly supports the project’s architecture — connecting a Flask web app to Azure SQL, Blob Storage, and Microsoft Authentication with minimal configuration.
 By choosing App Service, the focus remains on building and improving the application, rather than managing infrastructure, resulting in faster development, simplified maintenance, and reliable performance.
