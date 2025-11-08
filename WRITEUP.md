@@ -6,11 +6,14 @@
 For deploying the Flask-based Article CMS application on Azure, there are two main hosting options available — Azure Virtual Machines (VMs) and Azure App Service.
 Both allow web application deployment but differ in their level of control, scalability, cost, and ease of management.
 This write-up compares both options and concludes with the reasoning behind choosing Azure App Service for deployment.
+
 2. Azure Virtual Machine (VM)
+   
      Definition:
      An Azure Virtual Machine (VM) is an Infrastructure-as-a-Service (IaaS) offering that provides full control over the operating system, software installations, and
      environment configurations.
      Developers are responsible for setting up the runtime, dependencies, and web servers (like Gunicorn or Nginx) needed to run the application.
+   
      Pros:
      -Full control: You can configure the operating system, network, security, and installed software as needed.
      -Flexibility: Suitable for hosting multiple services on one machine (e.g., backend, database, or other servers).
@@ -21,10 +24,11 @@ This write-up compares both options and concludes with the reasoning behind choo
      -Manual scalability: Scaling up or down requires creating and configuring additional VMs.
      -Higher costs: Continuous uptime incurs more charges compared to managed services.
      
-  3. Azure App Service
+ 3. Azure App Service
       Definition:
       Azure App Service is a Platform-as-a-Service (PaaS) offering that allows developers to deploy web applications easily without managing infrastructure.
       It automatically handles scaling, load balancing, patching, and deployment. Developers only need to focus on the application code, while Azure manages the rest.
+     
       Pros:
       -Ease of deployment: Integrates directly with GitHub for continuous deployment (CI/CD).
       -Built-in scaling and availability: Automatically scales based on traffic and ensures high uptime.
@@ -54,7 +58,7 @@ The system scales into multiple interconnected services (in which case Azure Kub
 If the CMS added features such as: Background AI/ML tasks (e.g., automated image tagging, analytics) ,File conversions or large video uploads, Batch data processing then App Service’s request-timeout and runtime limits could become restrictive.
 In that case, I would use a Virtual Machine or integrate with Azure Functions or Azure Batch to handle long-running or compute-intensive tasks.
 
-Conclusion:
+4. Conclusion:
 In conclusion, Azure App Service is the ideal choice for deploying the Article CMS web application.
 It provides a cost-effective, scalable, and fully managed environment that perfectly supports the project’s architecture — connecting a Flask web app to Azure SQL, Blob Storage, and Microsoft Authentication with minimal configuration.
 By choosing App Service, the focus remains on building and improving the application, rather than managing infrastructure, resulting in faster development, simplified maintenance, and reliable performance.
