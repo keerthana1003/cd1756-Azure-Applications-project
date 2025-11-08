@@ -32,11 +32,11 @@ This write-up compares both options and concludes with the reasoning behind choo
       -Cost-effective: Pay only for what you use, with no need to manage underlying servers.
       -Automatic management: Azure handles OS updates, SSL certificates, and health monitoring.
       -Complex workflow: Deployment, configuration, and troubleshooting require SSH access and manual setup.
-     
       Cons:
       -Limited control: You can’t access or modify the underlying operating system.
       -Less flexibility for background tasks: Long-running or scheduled background processes may require separate services (like Azure Functions).
-
+     
+      
   For this project, Azure App Service is the most appropriate choice for deploying the Flask CMS application.
   It offers a managed, scalable, and secure environment that eliminates the need for infrastructure maintenance.
   Since this project integrates multiple Azure services — such as Azure SQL Database, Azure Blob Storage, and Azure Active Directory (for Microsoft login) — App Service simplifies
